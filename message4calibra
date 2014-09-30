@@ -50,10 +50,12 @@ if __name__=='__main__':
             if time.strptime(calibra, '%d/%m/%Y') <= time.strptime((today - \
                 datetime.timedelta(days=estation(today))).strftime("%d/%m/%Y"), 
                 '%d/%m/%Y'):
-                needCalibra=needCalibra+1
+                needCalibra = needCalibra+1
             else:
-                needCalibra=0
-        else:
-            notify("Advertencia", "Sin registros de calibraciones", gtk.STOCK_DIALOG_WARNING)
-    if needCalibra > 0:
+                needCalibra = 0
+        else:s
+            needCalibra = None
+    if needCalibra = None:
+        notify("Advertencia", "Sin registros de calibraciones", gtk.STOCK_DIALOG_WARNING)
+    elif needCalibra > 0:
         notify("Advertencia", "Hace más de %i días que los sensores innovex no han sido calibrados, favor de calibrar lo antes posible" % estation(today), gtk.STOCK_DIALOG_WARNING)
