@@ -37,7 +37,7 @@ def estation(today):
 
 if __name__=='__main__':
     log = open("/var/log/enviroview/oxigeno.log", "r")
-    needCalibra=0
+    needCalibra = 1
     today = datetime.datetime.now()
     month = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7,
             "Aug":8, "Sep":9, "Oct":10, "Nov":11, "Dec":12}s
@@ -52,10 +52,10 @@ if __name__=='__main__':
                 '%d/%m/%Y'):
                 needCalibra = needCalibra+1
             else:
-                needCalibra = 0
+                needCalibra = 1
         else:
-            needCalibra = None
-    if needCalibra is None:
+            needCalibra = 0
+    if needCalibra < 1:
         notify("Advertencia", "Sin registros de calibraciones", gtk.STOCK_DIALOG_WARNING)
-    elif needCalibra > 0:
+    elif needCalibra > 1:
         notify("Advertencia", "Hace más de %i días que los sensores innovex no han sido calibrados, favor de calibrar lo antes posible" % estation(today), gtk.STOCK_DIALOG_WARNING)
