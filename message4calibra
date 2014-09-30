@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# sudo apt-get install gtk2-engines-pixbuf
+
+import sys
+import os
+from datetime import *
+import datetime
+import time
+import pynotify
+import gtk
+from dateutil import rrule
+
+
+def notify(title, msg, icon=None):
+    if not pynotify.is_initted():
+        pynotify.init(title)
+    try:
+        note = pynotify.Notification(title, msg)
+    except KeyError:
+        note = pynotify.Notification(title, msg, icon)
+    note.show()
+
+
+def estation(today):
+    #verano=21/9 al 20/3 -> 7 dias
+    #invierno=21/3 al 20/9 -> 15 dias
+    #today.year ver si imprimer bien el año y colocar abajo
+    if time.strptime('21/03/2014', '%d/%m/%Y') <= \
+        time.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y') <= \
+        time.strptime('20/09/2014', '%d/%m/%Y'):
+        return 15
+    else:
+        return 7
+
+
+if __name__=='__main__':
+    log = open("/var/log/enviroview/oxigeno.log", "r")
+    needCalibra=0
+    today = datetime.datetime.now()
+    month = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7,
+            "Aug":8, "Sep":9, "Oct":10, "Nov":11, "Dec":12}
+    while True:
+        line = log.readline()
+        if not line: break
+        if "Calibra" in line and "exitosamente" in line:
+            list = line.split()
+            calibra = list[1] + "/" + str(month[list[2]]) + "/" + list[3]
+            if time.strptime(calibra, '%d/%m/%Y') <= time.strptime((today - \
+                datetime.timedelta(days=estation(today))).strftime("%d/%m/%Y"), 
+                '%d/%m/%Y'):
+                needCalibra=needCalibra+1
+            else:
+                needCalibra=0
+        else:
+            notify("Advertencia", "Sin registros de calibraciones", gtk.STOCK_DIALOG_WARNING)
+    if needCalibra > 0:
+        notify("Advertencia", "Hace más de %i días que los sensores innovex no han sido calibrados, favor de calibrar lo antes posible" % estation(today), gtk.STOCK_DIALOG_WARNING)
