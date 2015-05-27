@@ -1,0 +1,2 @@
+Â!#/usr/bin/bash
+minicom -b $(grep "^baudrate=*" /etc/innovex.cfg | sed 's/baudrate=//g') -D $(grep "^port=*" /etc/innovex.cfg | sed 's/port=//g')
